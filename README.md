@@ -22,9 +22,9 @@ Desarrollar las habilidades necesarias para limpiar, analizar y visualizar datos
 
 ## Estado actual
 
-- Fase: 0, preparación.
-- Tema actual: configuración de GitHub y organización de la ruta.
-- Próxima fase: fundamentos de SQL con SQLite.
+- Fase: , sql.
+- Tema actual: análisis de ventas chinook.
+- Próxima fase: Excel.
 
 ## Proyectos previstos
 
