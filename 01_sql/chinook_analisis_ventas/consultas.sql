@@ -42,3 +42,53 @@ SELECT
 FROM Customer
 GROUP by Country
 ORDER by total_por_pais DESC;
+
+-- =========================================================
+-- 4. JOIN ENTRE CLIENTES Y FACTURAS
+-- Pregunta: ¿cuánto ha gastado cada cliente?
+-- =========================================================
+
+SELECT
+	c.CustomerId,
+	c.FirstName || ' ' || c.LastName as nombre_completo,
+	round(sum(i.total),2) as venta_total
+FROM Customer as c
+INNER JOIN Invoice as i
+	on i.CustomerId = c.CustomerId
+GROUP by
+	c.CustomerId,
+	c.FirstName,
+	c.LastName
+ORDER by venta_total desc;
+
+-- =========================================================
+-- 5. VENTAS POR PAÍS
+-- Pregunta: ¿qué países generan mayor facturación?
+-- =========================================================
+
+SELECT
+	BillingCountry as pais,
+	Count(InvoiceId) as numero_facturas,
+	round(sum(total),2) as total_pais,
+	round(avg(total),2) as promedio_pais
+FROM Invoice
+GROUP by BillingCountry
+ORDER by total_pais desc;
+
+-- =========================================================
+-- 6. JOIN DE VARIAS TABLAS
+-- Pregunta: ¿qué géneros musicales generan más ingresos?
+-- =========================================================
+
+SELECT
+	g.name as genero,
+	round(sum(il.UnitPrice * il.Quantity),2) as venta_genero
+from Genre as g
+INNER JOIN Track as t
+	on g.GenreId = t.GenreId
+INNER JOIN InvoiceLine as il
+	on t.TrackId = il.TrackId
+GROUP by
+	g.GenreId,
+	g.name
+ORDER by venta_genero DESC;
