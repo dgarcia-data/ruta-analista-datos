@@ -8,10 +8,10 @@ El objetivo es practicar SQL mediante preguntas relacionadas con clientes, factu
 
 ## Preguntas de análisis
 
-- ¿Cuántos clientes hay registrados en cada país?
-- ¿Qué clientes han generado mayor facturación?
-- ¿Qué países generan mayores ingresos?
-- ¿Qué géneros musicales generan más ingresos?
+- ¿cuántos clientes hay en cada país?
+- ¿cuánto ha gastado cada cliente?
+- ¿qué países generan mayor facturación?
+- ¿qué géneros musicales generan más ingresos?
 
 ## Herramientas utilizadas
 
@@ -43,6 +43,6 @@ chinook_analisis_ventas/
 ├── README.md
 ├── consultas.sql
 └── resultados/
-    ├── ventas_por_pais.csv
-    ├── clientes_mayor_facturacion.csv
-    └── ingresos_por_genero.csv
+    ├── 4_venta_por_clientes.csv
+    ├── 5_ventas_por_pais.csv
+    └── 6_ventas_por_genero.csv
