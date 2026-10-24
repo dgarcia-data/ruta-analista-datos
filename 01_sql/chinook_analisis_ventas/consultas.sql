@@ -92,3 +92,35 @@ GROUP by
 	g.GenreId,
 	g.name
 ORDER by venta_genero DESC;
+
+DROP VIEW IF EXISTS vista_ventas_clientes;
+
+CREATE VIEW vista_ventas_clientes AS
+SELECT
+    c.CustomerId,
+    c.FirstName || ' ' || c.LastName AS cliente,
+    c.Country AS pais,
+    COUNT(DISTINCT i.InvoiceId) AS cantidad_facturas,
+    ROUND(SUM(i.Total), 2) AS gasto_total
+FROM Customer AS c
+LEFT JOIN Invoice AS i
+    ON c.CustomerId = i.CustomerId
+GROUP BY
+    c.CustomerId,
+    c.FirstName,
+    c.LastName,
+    c.Country;
+
+-- Consulta de comprobación: clientes con mayor gasto
+
+SELECT *
+FROM vista_ventas_clientes
+ORDER BY gasto_total DESC;
+
+-- =========================================================
+-- 8. ÍNDICE DE PRÁCTICA
+-- Objetivo: facilitar búsquedas por país de facturación
+-- =========================================================
+
+CREATE INDEX IF NOT EXISTS idx_invoice_billing_country
+ON Invoice (BillingCountry);
