@@ -23,7 +23,7 @@ Desarrollar las habilidades necesarias para limpiar, analizar y visualizar datos
 ## Estado actual
 
 - Fase: , sql.
-- Tema actual: análisis de ventas chinook.
+- Tema actual: analisis comercial northwind.
 - Próxima fase: Excel.
 
 ## Proyectos previstos
