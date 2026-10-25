@@ -124,3 +124,21 @@ ORDER BY gasto_total DESC;
 
 CREATE INDEX IF NOT EXISTS idx_invoice_billing_country
 ON Invoice (BillingCountry);
+
+-- =========================================================
+-- VALIDACIONES FINALES
+-- =========================================================
+
+-- Se comparó la facturación general con los totales
+-- agrupados por cliente, país y género musical.
+
+-- Se verificó que los JOIN no duplicaran ni excluyeran ventas.
+
+-- Se revisó el funcionamiento de la vista y del índice mediante
+-- consultas de comprobación.
+
+-- =========================================================
+-- FIN DEL PROYECTO
+-- Proyecto: Análisis de ventas de Chinook
+-- Estado: finalizado
+-- =========================================================
