@@ -62,3 +62,84 @@ INNER JOIN Products as p
 GROUP BY c.CategoryID
 HAVING total_productos >= 10
 ORDER BY total_productos DESC;
+
+-- =========================================================
+-- 5. CLIENTES CON MAYOR FACTURACIÓN
+-- Pregunta: ¿Qué clientes generan mayor facturación neta?
+-- NOTA: en la tabla "order details" y la columna "Discount"
+-- no se define si el descuento es en porcentaje o un valor fijo,
+-- en este caso y por tratarse de consultas meramente academicas
+-- decido calcular el descuento en porcentaje
+-- =========================================================
+
+SELECT
+	c.CustomerID,
+	c.CompanyName,
+	round(sum((od.UnitPrice * od.Quantity) * (1 - od.Discount)),2) as venta_total
+FROM Customers as c
+INNER JOIN Orders as o
+	on c.CustomerID = o.CustomerID
+INNER JOIN "Order details" as od
+	on o.OrderID = od.OrderID
+GROUP BY 
+	c.CustomerID,
+	c.CompanyName
+ORDER BY
+	venta_total DESC
+
+-- =========================================================
+-- 6. VENTAS POR CATEGORÍA
+-- Pregunta: ¿Qué categorías generan mayores ingresos?
+-- =========================================================
+
+SELECT
+	c.CategoryID,
+	c.CategoryName,
+	round(sum((od.UnitPrice * od.Quantity) * (1 - od.Discount)),2) as venta_total
+from Categories as c
+INNER JOIN Products as p
+	on c.CategoryID = p.CategoryID
+INNER JOIN "order details" as od
+	on p.ProductID = od.ProductID
+GROUP BY
+	c.CategoryID,
+	c.CategoryName
+ORDER BY
+	venta_total DESC;
+
+-- =========================================================
+-- 7. PRODUCTOS MÁS VENDIDOS
+-- Pregunta: ¿Cuáles son los productos más vendidos?
+-- =========================================================
+
+SELECT
+	p.ProductID,
+	p.ProductName,
+	sum(od.Quantity) as cantidad_vendida
+FROM Products as p
+INNER JOIN "order details" as od
+	on p.ProductID = od.ProductID
+GROUP BY
+	p.ProductID,
+	p.ProductName
+ORDER BY cantidad_vendida DESC;
+
+-- =========================================================
+-- 8. FACTURACIÓN GESTIONADA POR EMPLEADO
+-- Pregunta: ¿Qué empleados gestionan mayor facturación?
+-- =========================================================
+
+SELECT
+	e.EmployeeID,
+	e.FirstName||' '||e.LastName as nombre_completo,
+	count(DISTINCT o.OrderID) as cantidad_pedidos,
+	round(sum((od.UnitPrice * od.Quantity) * (1 - od.Discount)),2) as venta_total
+FROM Employees as e
+INNER JOIN Orders as o
+	on e.EmployeeID = o.EmployeeID
+INNER JOIN "order details" as od
+	on o.OrderID = od.OrderID
+GROUP BY
+	e.EmployeeID,
+	nombre_completo
+ORDER BY venta_total DESC;
