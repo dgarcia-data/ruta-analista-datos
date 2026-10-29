@@ -143,3 +143,90 @@ GROUP BY
 	e.EmployeeID,
 	nombre_completo
 ORDER BY venta_total DESC;
+
+-- =========================================================
+-- 9. SEGMENTACIÓN DE CLIENTES
+-- Pregunta: ¿Cómo clasificar a los clientes según su facturación?
+-- NOTA: se reutiliza la consulta 5
+-- =========================================================
+
+WITH ventas_por_cliente as (
+	SELECT
+		c.CustomerID,
+		c.CompanyName,
+		round(sum((od.UnitPrice * od.Quantity) * (1 - od.Discount)),2) as venta_total
+	FROM Customers as c
+	INNER JOIN Orders as o
+		on c.CustomerID = o.CustomerID
+	INNER JOIN "Order details" as od
+		on o.OrderID = od.OrderID
+	GROUP BY 
+		c.CustomerID,
+		c.CompanyName
+	ORDER BY
+		venta_total DESC
+)
+
+SELECT 
+	CustomerID,
+	CompanyName,
+	venta_total,
+	CASE
+		WHEN venta_total = 0 THEN 'sin compras'
+		WHEN venta_total < 4000000 THEN 'compras bajas'
+		WHEN venta_total >= 4000000 AND venta_total < 5000000 THEN 'compras promedio'
+		ELSE 'compras altas'
+	END as estado_compras
+FROM ventas_por_cliente;
+
+-- =========================================================
+-- 10. PRODUCTOS CON VENTAS SUPERIORES AL PROMEDIO
+-- Pregunta: ¿Qué productos generan ingresos superiores al promedio?
+-- =========================================================
+
+
+WITH ventas_productos AS (
+    SELECT
+        p.ProductID,
+        p.ProductName,
+        SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS venta_total
+    FROM Products AS p
+    INNER JOIN "Order Details" AS od
+        ON p.ProductID = od.ProductID
+    GROUP BY
+        p.ProductID,
+        p.ProductName
+)
+
+SELECT
+    ProductID,
+    ProductName,
+    ROUND(venta_total, 2) AS venta_total,
+    ROUND((SELECT AVG(venta_total)
+            FROM ventas_productos),2) AS promedio_venta
+FROM ventas_productos
+WHERE venta_total > (SELECT AVG(venta_total)
+					 FROM ventas_productos)
+ORDER BY
+    venta_total DESC;
+
+-- =========================================================
+-- 11. VENTAS POR AÑO Y MES
+-- Pregunta: ¿Cómo evolucionan las ventas a lo largo del tiempo?
+-- =========================================================
+
+    SELECT
+    strftime('%Y', o.OrderDate) AS anio,
+    strftime('%m', o.OrderDate) AS mes,
+    count(DISTINCT o.OrderID) as cantidad_ordenes,
+    round(sum((od.UnitPrice * od.Quantity) * (1 - od.Discount)),2) as venta_total
+FROM Orders AS o
+INNER JOIN "Order Details" AS od
+    ON o.OrderID = od.OrderID
+WHERE o.OrderDate IS NOT NULL
+GROUP BY
+    strftime('%Y', o.OrderDate),
+    strftime('%m', o.OrderDate)
+ORDER BY
+    anio ASC,
+    mes ASC;
