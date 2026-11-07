@@ -373,6 +373,6 @@ on Orders (OrderID);
 
 -- =========================================================
 -- FIN DEL PROYECTO
--- Proyecto: Análisis de ventas de Chinook
+-- Proyecto: Análisis comercial de Northwind
 -- Estado: finalizado
 -- =========================================================
