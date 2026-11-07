@@ -358,3 +358,21 @@ ORDER BY
 CREATE INDEX IF NOT EXISTS idx_Orders_OrderID
 on Orders (OrderID);
 
+-- =========================================================
+-- VALIDACIONES FINALES
+-- =========================================================
+
+-- 1. Calcular la facturación neta general directamente desde "Order Details".
+-- 2. Compararla con los totales agrupados por cliente, categoría,
+--    producto, empleado y periodo.
+-- 3. Revisar la cantidad de filas antes y después de cada JOIN.
+-- 4. Comprobar valores NULL en claves y fechas relevantes.
+-- 5. Verificar que Discount se aplique como proporción entre 0 y 1.
+-- 6. Confirmar que cada GROUP BY responde a la granularidad declarada.
+-- 7. Redondear para presentación.
+
+-- =========================================================
+-- FIN DEL PROYECTO
+-- Proyecto: Análisis de ventas de Chinook
+-- Estado: finalizado
+-- =========================================================
