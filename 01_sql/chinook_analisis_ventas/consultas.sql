@@ -93,6 +93,11 @@ GROUP by
 	g.name
 ORDER by venta_genero DESC;
 
+-- =========================================================
+-- 7. VISTA REUTILIZABLE DE VENTAS
+-- Pregunta: ¿Cómo guardar un resumen reutilizable de las ventas por cliente?
+-- =========================================================
+
 DROP VIEW IF EXISTS vista_ventas_clientes;
 
 CREATE VIEW vista_ventas_clientes AS
