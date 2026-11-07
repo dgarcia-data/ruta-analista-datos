@@ -22,9 +22,9 @@ Desarrollar las habilidades necesarias para limpiar, analizar y visualizar datos
 
 ## Estado actual
 
-- Fase: , sql.
-- Tema actual: analisis comercial northwind.
-- Próxima fase: Excel.
+- Fase: , Excel.
+- Tema actual: estructura, limpieza y fórmulas.
+- Próxima fase: Power Bi.
 
 ## Proyectos previstos
 
