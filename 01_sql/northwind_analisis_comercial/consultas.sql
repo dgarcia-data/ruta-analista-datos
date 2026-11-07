@@ -230,3 +230,131 @@ GROUP BY
 ORDER BY
     anio ASC,
     mes ASC;
+
+-- =========================================================
+-- 12. RANKING DE EMPLEADOS POR VENTAS
+-- Pregunta: ¿Cuál es el ranking de empleados por facturación gestionada?
+-- =========================================================
+
+WITH ventas_empleados AS (
+	SELECT
+		e.EmployeeID,
+		e.FirstName||' '||e.LastName as nombre_completo,
+		count(DISTINCT o.OrderID) as cantidad_pedidos,
+		round(sum((od.UnitPrice * od.Quantity) * (1 - od.Discount)),2) as venta_total
+	FROM Employees as e
+	INNER JOIN Orders as o
+		on e.EmployeeID = o.EmployeeID
+	INNER JOIN "order details" as od
+		on o.OrderID = od.OrderID
+	GROUP BY
+		e.EmployeeID,
+		nombre_completo
+	ORDER BY venta_total DESC
+)
+SELECT
+    RANK() OVER (
+        ORDER BY venta_total DESC
+    ) AS posicion,
+    EmployeeID,
+    nombre_completo,
+    cantidad_pedidos,
+    ROUND(venta_total, 2) AS venta_total
+FROM ventas_empleados
+ORDER BY
+    posicion ASC;
+
+-- =========================================================
+-- 13. TRES PRODUCTOS CON MAYORES INGRESOS POR CATEGORÍA
+-- Pregunta: ¿Cuáles son los tres productos líderes dentro de cada categoría?
+-- =========================================================
+
+WITH ventas_productos AS (
+    SELECT
+        c.CategoryID,
+        c.CategoryName,
+        p.ProductID,
+        p.ProductName,
+        SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS ingreso_neto
+    FROM Categories AS c
+    INNER JOIN Products AS p
+        ON c.CategoryID = p.CategoryID
+    INNER JOIN "Order Details" AS od
+        ON p.ProductID = od.ProductID
+    GROUP BY
+        c.CategoryID,
+        c.CategoryName,
+        p.ProductID,
+        p.ProductName
+),
+
+ranking_productos AS (
+    SELECT
+        CategoryID,
+        CategoryName,
+        ProductID,
+        ProductName,
+        ingreso_neto,
+        ROW_NUMBER() OVER (
+            PARTITION BY CategoryID
+            ORDER BY ingreso_neto DESC
+        ) AS posicion_categoria
+    FROM ventas_productos
+)
+
+SELECT
+    posicion_categoria,
+    CategoryID,
+    ProductID,
+    ingreso_neto
+FROM ranking_productos
+WHERE posicion_categoria <= 3
+ORDER BY
+    CategoryName ASC,
+    posicion_categoria ASC;
+
+-- =========================================================
+-- 14. VISTA REUTILIZABLE DE VENTAS
+-- Pregunta: ¿Cómo guardar un resumen reutilizable de las ventas?
+-- =========================================================
+
+DROP VIEW IF EXISTS vista_resumen_clientes;
+CREATE VIEW vista_resumen_clientes AS
+SELECT
+    c.CustomerID,
+    c.CompanyName,
+    COALESCE(c.Country, 'País no registrado') AS pais,
+    COUNT(DISTINCT o.OrderID) AS cantidad_pedidos,
+    COALESCE(SUM(od.Quantity),0) AS unidades_compradas,
+    COALESCE(ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)),2),0) AS venta_total,
+    MAX(o.OrderDate) AS ultima_compra
+FROM Customers AS c
+LEFT JOIN Orders AS o
+    ON c.CustomerID = o.CustomerID
+LEFT JOIN "Order Details" AS od
+    ON o.OrderID = od.OrderID
+GROUP BY
+    c.CustomerID,
+    c.CompanyName,
+    c.Country;
+	
+SELECT
+    CustomerID,
+    CompanyName,
+    pais,
+    cantidad_pedidos,
+    unidades_compradas,
+    venta_total,
+    ultima_compra
+FROM vista_resumen_clientes
+ORDER BY
+    venta_total DESC;
+
+-- =========================================================
+-- 15. ÍNDICE Y PLAN DE EJECUCIÓN
+-- Pregunta: ¿Qué índice puede facilitar una búsqueda frecuente?
+-- =========================================================
+
+CREATE INDEX IF NOT EXISTS idx_Orders_OrderID
+on Orders (OrderID);
+
