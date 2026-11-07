@@ -215,7 +215,7 @@ ORDER BY
 -- Pregunta: ¿Cómo evolucionan las ventas a lo largo del tiempo?
 -- =========================================================
 
-    SELECT
+SELECT
     strftime('%Y', o.OrderDate) AS anio,
     strftime('%m', o.OrderDate) AS mes,
     count(DISTINCT o.OrderID) as cantidad_ordenes,
